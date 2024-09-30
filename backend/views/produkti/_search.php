@@ -48,6 +48,7 @@ use yii\widgets\ActiveForm;
     <?php // echo $form->field($model, 'RealizacijasTermins') ?>
 
     <?php // echo $form->field($model, 'ProduktaVeids') ?>
+    <?php // echo $form->field($model, 'PudelesTips') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

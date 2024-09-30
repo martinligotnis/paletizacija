@@ -17,9 +17,9 @@ class ProduktiSearch extends Produkti
     public function rules()
     {
         return [
-            [['ProduktaNr', 'Apraksts', 'IepakojumaTips', 'BazesMervieniba', 'PrecuBrends', 'ProduktaVeids'], 'safe'],
+            [['ProduktaNr', 'Apraksts', 'IepakojumaTips', 'BazesMervieniba', 'PrecuBrends', 'ProduktaVeids', 'PudelesTips'], 'safe'],
             [['Tilpums', 'NetoSvars', 'BruttoSvars'], 'number'],
-            [['Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins'], 'integer'],
+            [['Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips'], 'integer'],
         ];
     }
 
@@ -70,6 +70,7 @@ class ProduktiSearch extends Produkti
             'ProduktiRinda' => $this->ProduktiRinda,
             'ProduktiPalete' => $this->ProduktiPalete,
             'RealizacijasTermins' => $this->RealizacijasTermins,
+            'PudelesTips'=> $this->PudelesTips,
         ]);
 
         $query->andFilterWhere(['like', 'ProduktaNr', $this->ProduktaNr])

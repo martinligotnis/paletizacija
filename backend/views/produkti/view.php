@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\Produkti $model */
 
 $this->title = $model->ProduktaNr;
-$this->params['breadcrumbs'][] = ['label' => 'Produktis', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Produkti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -16,11 +16,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'ProduktaNr' => $model->ProduktaNr], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'ProduktaNr' => $model->ProduktaNr], [
+        <?= Html::a('Atjaunot', ['update', 'ProduktaNr' => $model->ProduktaNr], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Izdzēst', ['delete', 'ProduktaNr' => $model->ProduktaNr], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => 'Vai esat pārliecināts, ka gribat izdzēst šo produktu?',
                 'method' => 'post',
             ],
         ]) ?>
@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'ProduktiPalete',
             'RealizacijasTermins',
             'ProduktaVeids',
+            'PudelesTips',
         ],
     ]) ?>
 

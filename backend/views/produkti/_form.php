@@ -45,6 +45,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'RealizacijasTermins')->textInput() ?>
 
     <?= $form->field($model, 'ProduktaVeids')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'PudelesTips')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

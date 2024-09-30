@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\ProduktiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Produktis';
+$this->title = 'Produkti';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="produkti-index">
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Produkti', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Izveidot Produktu', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'ProduktiPalete',
             //'RealizacijasTermins',
             'ProduktaVeids',
+            'PudelesTips',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Produkti $model, $key, $index, $column) {
