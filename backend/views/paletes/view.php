@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'DatumsLaiks' => urlencode($model->DatumsLaiks)], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'DatumsLaiks' => urlencode($model->DatumsLaiks)], [
+        <?= Html::a('Delete', ['delete', 'DatumsLaiks' => $model->DatumsLaiks], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',

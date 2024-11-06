@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         'urlCreator' => function ($action, $model, $key, $index) {
 
-            return Url::to([$action, 'DatumsLaiks' => urlencode($model->DatumsLaiks)]);
+            return Url::to([$action, 'DatumsLaiks' => $model->DatumsLaiks]);
 
         }
 

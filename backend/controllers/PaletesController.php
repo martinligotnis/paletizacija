@@ -44,7 +44,7 @@ class PaletesController extends Controller
 
         $searchModel = new PaletesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->pagination = ['pageSize' => 20,];
+        $dataProvider->pagination = ['pageSize' => 100,];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
