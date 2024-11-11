@@ -34,9 +34,16 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
+    // $menuItems = [
+    //     ['label' => 'Home', 'url' => ['/site/index']],
+    // ];
+    $menuItems = [];
+    if (Yii::$app->user->isGuest) {
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    } else {
+        $menuItems[] = ['label' => 'Paletes', 'url' => ['/paletes']];
+        $menuItems[] = ['label' => 'Produkti', 'url' => ['/produkti']];
+    }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     }     

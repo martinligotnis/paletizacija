@@ -8,6 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
+    'name' => 'Paletizācijas uzskaite',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
@@ -18,7 +19,8 @@ return [
     ],
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-backend',
+            'cookieValidationKey' => 'MGhqacVMyPbQFGyyVcFL',
+            'csrfParam' => '_backendCSRF'
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -41,14 +43,17 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
-        ],
-        */
+        
+        // 'urlManager' => [
+        //     'enablePrettyUrl' => true,
+        //     'showScriptName' => false,
+        //     'rules' => [
+        //         '<controller:\w+>/<id:\d+>' => '<controller>/view',
+        //         '<controller:\w+>/<action:\w+>' => '<controller>/<action>',   
+        
+        //     ],
+        // ],
+        
     ],
     'params' => $params,
 ];
