@@ -69,4 +69,32 @@ class PaletesSearch extends Paletes
 
         return $dataProvider;
     }
+    public function getLastHourStats()
+    {
+        $query = Paletes::find()
+            ->select([
+                'COUNT(*) as total_count',
+                'MIN(DatumsLaiks) as oldest_record',
+                'MAX(DatumsLaiks) as newest_record',
+                'COUNT(DISTINCT ProduktaNr) as unique_products'
+            ])
+            ->where('DatumsLaiks > DATE_SUB(NOW(), INTERVAL 1 HOUR)')
+            ->andWhere(['IS NOT', 'DatumsLaiks', null]);
+        
+        return $query->asArray()->one();
+    }
+    public function getTodayStats()
+    {
+        return Paletes::find()
+            ->select([
+                'COUNT(*) as total_count',
+                'MIN(DatumsLaiks) as first_pallet',
+                'MAX(DatumsLaiks) as last_pallet',
+                'COUNT(DISTINCT ProduktaNr) as unique_products',
+                'COUNT(*) / TIMESTAMPDIFF(HOUR, MIN(DatumsLaiks), MAX(DatumsLaiks)) as pallets_per_hour'
+            ])
+            ->where('DATE(DatumsLaiks) = DATE(NOW())')
+            ->asArray()
+            ->one();
+    }
 }

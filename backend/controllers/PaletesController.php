@@ -43,12 +43,16 @@ class PaletesController extends Controller
         $this->mustBeLoggedIn();
 
         $searchModel = new PaletesSearch();
+        $stats = $searchModel->getLastHourStats();
+        $todaysStats = $searchModel->getTodayStats();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->pagination = ['pageSize' => 100,];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'stats' => $stats,
+            'todaysStats' => $todaysStats,
         ]);
     }
 
