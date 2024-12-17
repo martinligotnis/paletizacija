@@ -41,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= Html::encode($stats['newest_record']) ?></td>
         </tr>
         <tr>
-            <th>Unique Products</th>
-            <td><?= Html::encode($stats['unique_products']) ?></td>
+            <th>Unique Products Today</th>
+            <td><?= Html::encode($todaysStats['unique_products']) ?></td>
         </tr>
         <tr>
             <th>Total Pallets Produced Today</th>
@@ -53,6 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= Html::encode($todaysStats['pallets_per_hour']) ?></td>
         </tr>
     </table>
+    
 </div>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

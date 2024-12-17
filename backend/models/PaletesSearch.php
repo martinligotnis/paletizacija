@@ -91,9 +91,9 @@ class PaletesSearch extends Paletes
                 'MIN(DatumsLaiks) as first_pallet',
                 'MAX(DatumsLaiks) as last_pallet',
                 'COUNT(DISTINCT ProduktaNr) as unique_products',
-                'COUNT(*) / TIMESTAMPDIFF(HOUR, MIN(DatumsLaiks), MAX(DatumsLaiks)) as pallets_per_hour'
+                'CAST(COUNT(*) AS FLOAT) / (TIMESTAMPDIFF(SECOND, MIN(DatumsLaiks), MAX(DatumsLaiks)) / 3600.0) as pallets_per_hour'
             ])
-            ->where('DATE(DatumsLaiks) = DATE(NOW())')
+            ->where('DATE(DatumsLaiks) = CURDATE()')
             ->asArray()
             ->one();
     }
