@@ -25,6 +25,7 @@ class m240823_131415_paletes extends Migration
             'DatumsLaiks' => $this->datetime(),
             'PaletesID' => $this->integer()->notNull(),         
             'RealizacijasTermins' => $this->date()->notNull(),
+            'IsPrinted' => $this->tinyInteger()->defaultValue(0),
             'PRIMARY KEY(DatumsLaiks)',
         ], $tableOptions);
 

@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'ProduktaNr',
             'Apraksts:ntext',
             'Tilpums',
-            'NetoSvars',
+            // 'NetoSvars',
             'IepakojumaTips',
             'Izkartojums',
             //'PakasGarums',
@@ -47,6 +47,8 @@ $this->params['breadcrumbs'][] = $this->title;
             //'RealizacijasTermins',
             'ProduktaVeids',
             'PudelesTips',
+            'barcode',
+            'ProduktaNosaukums:ntext',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Produkti $model, $key, $index, $column) {

@@ -47,6 +47,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'RealizacijasTermins',
             'ProduktaVeids',
             'PudelesTips',
+            'barcode',
+            'ProduktaNosaukums',
         ],
     ]) ?>
 

@@ -48,6 +48,11 @@ use yii\widgets\ActiveForm;
     
     <?= $form->field($model, 'PudelesTips')->textInput() ?>
 
+    <?= $form->field($model, 'barcode')->textInput() ?>
+    
+    <?= $form->field($model, 'ProduktaNosaukums')->textInput() ?>
+
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

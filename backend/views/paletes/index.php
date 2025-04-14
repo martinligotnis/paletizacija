@@ -68,6 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'DatumsLaiks',
         'PaletesID',
         'RealizacijasTermins',
+        'IsPrinted',
 
         ['class' => 'yii\grid\ActionColumn', 
 
