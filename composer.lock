@@ -8,31 +8,31 @@
     "packages": [
         {
             "name": "bower-asset/bootstrap",
-            "version": "v5.2.3",
+            "version": "v5.3.5",
             "source": {
                 "type": "git",
-                "url": "git@github.com:twbs/bootstrap.git",
-                "reference": "cb021439c683d9805e2864c58095b92d405e9b11"
+                "url": "https://github.com/twbs/bootstrap.git",
+                "reference": "85f23534bd2de8041354b297516cf21959091b31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/cb021439c683d9805e2864c58095b92d405e9b11",
-                "reference": "cb021439c683d9805e2864c58095b92d405e9b11"
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/85f23534bd2de8041354b297516cf21959091b31",
+                "reference": "85f23534bd2de8041354b297516cf21959091b31"
             },
             "type": "bower-asset"
         },
         {
             "name": "bower-asset/inputmask",
-            "version": "5.0.8",
+            "version": "5.0.9",
             "source": {
                 "type": "git",
-                "url": "git@github.com:RobinHerbots/Inputmask.git",
-                "reference": "e0f39e0c93569c6b494c3a57edef2c59313a6b64"
+                "url": "https://github.com/RobinHerbots/Inputmask.git",
+                "reference": "310a33557e2944daf86d5946a5e8c82b9118f8f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RobinHerbots/Inputmask/zipball/e0f39e0c93569c6b494c3a57edef2c59313a6b64",
-                "reference": "e0f39e0c93569c6b494c3a57edef2c59313a6b64"
+                "url": "https://api.github.com/repos/RobinHerbots/Inputmask/zipball/310a33557e2944daf86d5946a5e8c82b9118f8f7",
+                "reference": "310a33557e2944daf86d5946a5e8c82b9118f8f7"
             },
             "require": {
                 "bower-asset/jquery": ">=1.7"
@@ -3110,26 +3110,26 @@
         },
         {
             "name": "yiisoft/yii2-bootstrap5",
-            "version": "2.0.4",
+            "version": "2.0.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-bootstrap5.git",
-                "reference": "0ce35f80ca07763fa2c6f38d1c0a1aaf65c76d2e"
+                "reference": "ad080a7ea063074888c2d801f6b05162064f8ae0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap5/zipball/0ce35f80ca07763fa2c6f38d1c0a1aaf65c76d2e",
-                "reference": "0ce35f80ca07763fa2c6f38d1c0a1aaf65c76d2e",
+                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap5/zipball/ad080a7ea063074888c2d801f6b05162064f8ae0",
+                "reference": "ad080a7ea063074888c2d801f6b05162064f8ae0",
                 "shasum": ""
             },
             "require": {
-                "bower-asset/bootstrap": "^5.1.0",
+                "bower-asset/bootstrap": "^5.2.3",
                 "ext-json": "*",
-                "php": ">=7.0",
+                "php": ">=7.3",
                 "yiisoft/yii2": "^2.0.42"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.5.14",
+                "phpunit/phpunit": "^9.6",
                 "twbs/bootstrap-icons": "^1.7.2",
                 "yiisoft/yii2-coding-standards": "~2.0"
             },
@@ -3187,7 +3187,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-30T08:25:21+00:00"
+            "time": "2025-04-10T08:03:20+00:00"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -7071,17 +7071,17 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "kartik-v/yii2-widget-datepicker": 20,
-        "kartik-v/yii2-widget-datetimepicker": 20,
-        "kartik-v/yii2-grid": 20,
+        "kartik-v/yii2-bootstrap5-dropdown": 20,
         "kartik-v/yii2-export": 20,
-        "kartik-v/yii2-bootstrap5-dropdown": 20
+        "kartik-v/yii2-grid": 20,
+        "kartik-v/yii2-widget-datepicker": 20,
+        "kartik-v/yii2-widget-datetimepicker": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
