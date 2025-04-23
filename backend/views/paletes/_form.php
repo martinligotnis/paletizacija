@@ -55,7 +55,6 @@ use kartik\datetime\DateTimePicker;
     <?= $form->field($model, 'PaletesID')->textInput() ?>
 
     <?= $form->field($model, 'RealizacijasTermins')->textInput() ?>
-    <?= $form->field($model, 'IsPrinted')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

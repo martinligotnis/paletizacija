@@ -35,7 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'DatumsLaiks',
             'PaletesID',
             'RealizacijasTermins',
-            'IsPrinted',
         ],
     ]) ?>
 

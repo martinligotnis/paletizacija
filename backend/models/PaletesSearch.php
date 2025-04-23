@@ -18,7 +18,7 @@ class PaletesSearch extends Paletes
     {
         return [
             [['ProduktaNr', 'Apraksts', 'DatumsLaiks', 'RealizacijasTermins'], 'safe'],
-            [['ProduktiPalete', 'PaletesID', 'IsPrinted'], 'integer'],
+            [['ProduktiPalete', 'PaletesID'], 'integer'],
         ];
     }
 
@@ -62,7 +62,6 @@ class PaletesSearch extends Paletes
             'DatumsLaiks' => $this->DatumsLaiks,
             'PaletesID' => $this->PaletesID,
             'RealizacijasTermins' => $this->RealizacijasTermins,
-            'IsPrinted' => $this->IsPrinted,
         ]);
 
         $query->andFilterWhere(['like', 'ProduktaNr', $this->ProduktaNr])
