@@ -69,7 +69,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'PaletesID',
         'RealizacijasTermins',
         'IsPrinted',
-
+        [
+            'label' => 'Time Since Previous',
+            'value' => function($model) {
+                return $model->getTimeSincePrevious();
+            },
+        ],
         ['class' => 'yii\grid\ActionColumn', 
 
         'urlCreator' => function ($action, $model, $key, $index) {

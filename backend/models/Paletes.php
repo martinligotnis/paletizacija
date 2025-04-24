@@ -76,4 +76,24 @@ class Paletes extends \yii\db\ActiveRecord
     {
         return new PaletesQuery(get_called_class());
     }
+
+    public function getTimeSincePrevious()
+    {
+        // Find the previous pallet (by DatumsLaiks)
+        $previous = self::find()
+            ->where(['<', 'DatumsLaiks', $this->DatumsLaiks])
+            ->orderBy(['DatumsLaiks' => SORT_DESC])
+            ->one();
+
+        if ($previous) {
+            $current = strtotime($this->DatumsLaiks);
+            $prev = strtotime($previous->DatumsLaiks);
+            $diff = $current - $prev; // in seconds
+
+            // Format as H:i:s
+            return gmdate("H:i:s", $diff);
+        } else {
+            return null; // or "First"
+        }
+    }
 }
