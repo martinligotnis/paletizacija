@@ -187,67 +187,79 @@ class PaletesController extends Controller
      */
     public function actionRecalcMetrics()
     {
-        // 1. Get all distinct products
+        $k = 3;  // outlier multiplier—you can tweak (1.5 is typical for boxplot/IQR)
         $allProducts = Paletes::find()
             ->select('ProduktaNr')
             ->groupBy('ProduktaNr')
             ->column();
 
         foreach ($allProducts as $prodNr) {
-            // 2. Find the “full pallet” size for this product
-            $fullSize = (int) Paletes::find()
-                ->where(['ProduktaNr' => $prodNr])
+            // 1) Determine full‐pallet size
+            $fullSize = (int)Paletes::find()
+                ->where(['ProduktaNr'=>$prodNr])
                 ->max('ProduktiPalete');
-
-            // If we never had a “full” pallet, skip
             if ($fullSize <= 0) {
                 continue;
             }
 
-            // 3. Fetch only the full pallets, ordered by time
-            $dateTimes = Paletes::find()
+            // 2) Fetch full‐pallet timestamps
+            $times = Paletes::find()
                 ->where([
                     'ProduktaNr'    => $prodNr,
-                    'ProduktiPalete'=> $fullSize
+                    'ProduktiPalete'=> $fullSize,
                 ])
-                ->orderBy(['DatumsLaiks' => SORT_ASC])
+                ->orderBy(['DatumsLaiks'=>SORT_ASC])
                 ->select('DatumsLaiks')
                 ->column();
 
-            // Need at least two full pallets to compute an interval
-            if (count($dateTimes) < 2) {
+            if (count($times) < 2) {
                 continue;
             }
 
-            // 4. Build the intervals array (in seconds)
-            $intervals = [];
-            for ($i = 1, $n = count($dateTimes); $i < $n; $i++) {
-                $intervals[] = strtotime($dateTimes[$i]) 
-                             - strtotime($dateTimes[$i - 1]);
+            // 3) Build raw intervals (in seconds)
+            $raw = [];
+            for ($i = 1, $n = count($times); $i < $n; $i++) {
+                $raw[] = strtotime($times[$i]) - strtotime($times[$i-1]);
             }
-            sort($intervals);
+            sort($raw);
+            $n = count($raw);
 
-            // 5. Compute metrics
-            $count = count($intervals);
-            $avg  = array_sum($intervals) / $count;
-            // percentiles: using zero-based index into sorted array
-            $p25 = $intervals[(int) floor(($count - 1) * 0.25)];
-            $p75 = $intervals[(int) floor(($count - 1) * 0.75)];
+            // 4) Compute initial percentiles and median
+            $p25    = $raw[(int)floor(($n-1)*0.25)];
+            $median = $raw[(int)floor(($n-1)*0.50)];
+            $p75    = $raw[(int)floor(($n-1)*0.75)];
+            $iqr    = $p75 - $p25;
+            $threshold = $median + $k * $iqr;
 
-            // 6. Upsert into product_metrics
-            $pm = ProductMetrics::findOne(['ProduktaNr' => $prodNr]);
-            if (!$pm) {
-                $pm = new ProductMetrics();
-                $pm->ProduktaNr = $prodNr;
-            }
-            $pm->avg_interval_seconds  = $avg;
-            $pm->p25_interval_seconds  = $p25;
-            $pm->p75_interval_seconds  = $p75;
-            $pm->last_updated          = date('Y-m-d H:i:s');
+            // 5) Filter out any “breakdown” intervals > threshold
+            $filtered = array_filter($raw, function($x) use ($threshold) {
+                return $x <= $threshold;
+            });
+            $filtered = array_values($filtered);
+            $m = count($filtered);
+
+            // 6) Decide: use filtered if still >=2 points, otherwise raw
+            $use = ($m >= 2) ? $filtered : $raw;
+            sort($use);
+            $m = count($use);
+
+            // 7) Recompute final metrics on $use
+            $avg  = array_sum($use) / $m;
+            $p25f = $use[(int)floor(($m-1)*0.25)];
+            $p75f = $use[(int)floor(($m-1)*0.75)];
+
+            // 8) Upsert into product_metrics
+            $pm = ProductMetrics::findOne(['ProduktaNr'=>$prodNr]) 
+                ?: new ProductMetrics(['ProduktaNr'=>$prodNr]);
+            $pm->avg_interval_seconds = $avg;
+            $pm->p25_interval_seconds = $p25f;
+            $pm->p75_interval_seconds = $p75f;
+            $pm->last_updated         = date('Y-m-d H:i:s');
             $pm->save(false);
         }
 
-        Yii::$app->session->setFlash('success', 'Product metrics recalculated (full‐pallets only).');
+        Yii::$app->session->setFlash('success', 
+            'Product metrics recalculated (outliers excluded).');
         return $this->redirect(['index']);
     }
 
