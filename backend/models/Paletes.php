@@ -77,23 +77,30 @@ class Paletes extends \yii\db\ActiveRecord
         return new PaletesQuery(get_called_class());
     }
 
+    /**
+     * Returns the timestamp-difference (in seconds) between this pallet and the previous one.
+     * @return int|null  seconds or null if none
+     */
+    public function getTimeSincePreviousSeconds()
+    {
+        $prev = self::find()
+            ->andWhere(['<','DatumsLaiks',$this->DatumsLaiks])
+            ->andWhere(['ProduktaNr'=>$this->ProduktaNr])
+            ->orderBy(['DatumsLaiks'=>SORT_DESC])
+            ->one();
+        if (!$prev) {
+            return null;
+        }
+        return strtotime($this->DatumsLaiks) - strtotime($prev->DatumsLaiks);
+    }
+
+    /**
+     * Formats the above as H:i:s or returns null.
+     */
     public function getTimeSincePrevious()
     {
-        // Find the previous pallet (by DatumsLaiks)
-        $previous = self::find()
-            ->where(['<', 'DatumsLaiks', $this->DatumsLaiks])
-            ->orderBy(['DatumsLaiks' => SORT_DESC])
-            ->one();
-
-        if ($previous) {
-            $current = strtotime($this->DatumsLaiks);
-            $prev = strtotime($previous->DatumsLaiks);
-            $diff = $current - $prev; // in seconds
-
-            // Format as H:i:s
-            return gmdate("H:i:s", $diff);
-        } else {
-            return null; // or "First"
-        }
+        $sec = $this->timeSincePreviousSeconds;
+        return $sec===null ? null : gmdate('H:i:s',$sec);
     }
+
 }

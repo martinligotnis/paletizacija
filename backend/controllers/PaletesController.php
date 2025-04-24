@@ -9,6 +9,7 @@ use backend\models\PaletesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\ProductMetrics;
 
 /**
  * PaletesController implements the CRUD actions for Paletes model.
@@ -43,19 +44,35 @@ class PaletesController extends Controller
         $this->mustBeLoggedIn();
 
         $searchModel = new PaletesSearch();
+
         $stats = $searchModel->getLastHourStats();
         $todaysStats = $searchModel->getTodayStats();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
         $dataProvider->pagination = ['pageSize' => 100,];
+
+        $last200 = Paletes::find()
+            ->orderBy(['DatumsLaiks'=>SORT_DESC])
+            ->limit(200)
+            ->select('DatumsLaiks')
+            ->column();
+
+        $metricsModels = ProductMetrics::find()->all();
+        $metricsMap = [];
+        foreach ($metricsModels as $m) {
+            $metricsMap[$m->ProduktaNr] = $m;
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'last200'      => $last200,
+            'metricsMap'   => $metricsMap,
             'stats' => $stats,
             'todaysStats' => $todaysStats,
         ]);
     }
-
+    
     /**
      * Displays a single Paletes model.
      * @param string $DatumsLaiks Datums Laiks
@@ -163,5 +180,53 @@ class PaletesController extends Controller
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+    }
+    
+    /**
+     * Recalculate production‐time metrics for each product
+     */
+    public function actionRecalcMetrics()
+    {
+        $allProducts = Paletes::find()
+            ->select('ProduktaNr')
+            ->groupBy('ProduktaNr')
+            ->column();
+
+        foreach ($allProducts as $prodNr) {
+            // 1) fetch all intervals for this product
+            $rows = Paletes::find()
+                ->andWhere(['ProduktaNr'=>$prodNr])
+                ->orderBy(['DatumsLaiks'=>SORT_ASC])
+                ->select('DatumsLaiks')
+                ->column();
+
+            $intervals = [];
+            for ($i=1; $i<count($rows); $i++) {
+                $intervals[] = strtotime($rows[$i]) - strtotime($rows[$i-1]);
+            }
+            if (empty($intervals)) {
+                continue;
+            }
+            sort($intervals);
+            $count = count($intervals);
+            $avg = array_sum($intervals)/$count;
+            $p25 = $intervals[floor($count*0.25)];
+            $p75 = $intervals[floor($count*0.75)];
+
+            // 2) upsert into product_metrics
+            $pm = ProductMetrics::findOne(['ProduktaNr'=>$prodNr]);
+            if (!$pm) {
+                $pm = new ProductMetrics();
+                $pm->ProduktaNr = $prodNr;
+            }
+            $pm->avg_interval_seconds = $avg;
+            $pm->p25_interval_seconds = $p25;
+            $pm->p75_interval_seconds = $p75;
+            $pm->last_updated = date('Y-m-d H:i:s');
+            $pm->save(false);
+        }
+
+        Yii::$app->session->setFlash('success','Product metrics recalculated.');
+        return $this->redirect(['index']);
     }
 }
