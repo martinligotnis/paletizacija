@@ -13,6 +13,7 @@ use Yii;
  * @property string $DatumsLaiks
  * @property int $PaletesID
  * @property string $RealizacijasTermins
+ * @property string $IsPrinted
  *
  * @property Produkti $produktaNr
  */
@@ -32,8 +33,8 @@ class Paletes extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ProduktaNr', 'Apraksts', 'ProduktiPalete', 'DatumsLaiks', 'PaletesID', 'RealizacijasTermins'], 'required'],
-            [['ProduktiPalete', 'PaletesID'], 'integer'],
+            [['ProduktaNr', 'Apraksts', 'ProduktiPalete', 'DatumsLaiks', 'PaletesID', 'RealizacijasTermins', 'IsPrinted'], 'required'],
+            [['ProduktiPalete', 'PaletesID', 'IsPrinted'], 'integer'],
             [['DatumsLaiks', 'RealizacijasTermins'], 'safe'],
             [['ProduktaNr', 'Apraksts'], 'string', 'max' => 50],
             [['DatumsLaiks'], 'unique'],
@@ -53,6 +54,7 @@ class Paletes extends \yii\db\ActiveRecord
             'DatumsLaiks' => 'Datums Laiks',
             'PaletesID' => 'Paletes ID',
             'RealizacijasTermins' => 'Realizacijas Termins',
+            'IsPrinted' => 'Is Printed',
         ];
     }
 
