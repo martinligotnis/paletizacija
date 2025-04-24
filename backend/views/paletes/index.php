@@ -14,6 +14,36 @@ use backend\models\ProductMetrics;
 $this->title = 'Paletes';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="paletes-stats">
+    <h3>Last Hour Statistics</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>Total Pallets</th>
+            <td><?= Html::encode($stats['total_count']) ?></td>
+        </tr>
+        <tr>
+            <th>First Record</th>
+            <td><?= Html::encode($stats['oldest_record']) ?></td>
+        </tr>
+        <tr>
+            <th>Latest Record</th>
+            <td><?= Html::encode($stats['newest_record']) ?></td>
+        </tr>
+        <tr>
+            <th>Unique Products Today</th>
+            <td><?= Html::encode($todaysStats['unique_products']) ?></td>
+        </tr>
+        <tr>
+            <th>Total Pallets Produced Today</th>
+            <td><?= Html::encode($todaysStats['total_count']) ?></td>
+        </tr>
+        <tr>
+            <th>Average production speed pal/hour</th>
+            <td><?= Html::encode($todaysStats['pallets_per_hour']) ?></td>
+        </tr>
+    </table>
+    
+</div>
 <div class="paletes-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
