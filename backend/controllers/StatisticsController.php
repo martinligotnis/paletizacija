@@ -15,49 +15,60 @@ class StatisticsController extends Controller
         $palTable  = Paletes::tableName();
         $prodTable = Produkti::tableName();
 
-        // Main SQL: group by date + product, join to produkti for names & line speed
-        $sql = "
-            SELECT
-                DATE(p.DatumsLaiks) AS date,
-                DAYNAME(p.DatumsLaiks) AS day,
-                p.ProduktaNr AS product_no,
-                pr.ProduktaNosaukums AS product_name,
-                COUNT(*) AS pallets_produced,
-                pr.ProduktiPalete AS units_per_pallet,
-                pr.LinijasAtrums AS line_speed_units_per_hour,
-                ROUND(
-                  COUNT(*) 
-                  / (TIMESTAMPDIFF(SECOND, MIN(p.DatumsLaiks), MAX(p.DatumsLaiks)) / 3600),
-                  1
-                ) AS pallets_per_hour,
-                ROUND(
-                  (COUNT(*) * pr.ProduktiPalete)
-                  / (
-                    pr.LinijasAtrums
-                    * (TIMESTAMPDIFF(SECOND, MIN(p.DatumsLaiks), MAX(p.DatumsLaiks)) / 3600)
-                  ),
-                  3
-                ) AS oee,
-                '' AS commentary
-            FROM {$palTable} p
-            LEFT JOIN {$prodTable} pr
-              ON pr.ProduktaNr = p.ProduktaNr
-            GROUP BY
-              DATE(p.DatumsLaiks),
-              p.ProduktaNr
-            ORDER BY
-              date DESC,
-              product_no
-        ";
+        // Main SQL: group by date+product, compute count+duration, then join produkti
+        $sql = <<<SQL
+SELECT
+  stats.date,
+  DAYNAME(stats.date)                        AS day,
+  stats.product_no,
+  pr.ProduktaNosaukums                       AS product_name,
+  stats.pallets_produced,
+  pr.ProduktiPalete                          AS units_per_pallet,
+  pr.LinijasAtrums                           AS line_speed_units_per_hour,
+  ROUND(
+    stats.pallets_produced
+    / (stats.duration_sec / 3600),
+    1
+  )                                           AS pallets_per_hour,
+  ROUND(
+    (stats.pallets_produced * pr.ProduktiPalete)
+    / (pr.LinijasAtrums * (stats.duration_sec / 3600)),
+    3
+  )                                           AS oee,
+  ''                                         AS commentary
+FROM (
+  SELECT
+    DATE(DatumsLaiks)                        AS date,
+    ProduktaNr                               AS product_no,
+    COUNT(*)                                 AS pallets_produced,
+    TIMESTAMPDIFF(
+      SECOND,
+      MIN(DatumsLaiks),
+      MAX(DatumsLaiks)
+    )                                         AS duration_sec
+  FROM {$palTable}
+  GROUP BY
+    DATE(DatumsLaiks),
+    ProduktaNr
+) AS stats
+LEFT JOIN {$prodTable} pr
+  ON pr.ProduktaNr = stats.product_no
+ORDER BY
+  stats.date DESC,
+  stats.product_no
+SQL;
 
-        // Count grouped rows for pagination
-        $countSql = "
-            SELECT COUNT(*) FROM (
-              SELECT 1
-              FROM {$palTable}
-              GROUP BY DATE(DatumsLaiks), ProduktaNr
-            ) t
-        ";
+        // Count for pagination
+        $countSql = <<<SQL
+SELECT COUNT(*) FROM (
+  SELECT 1
+  FROM {$palTable}
+  GROUP BY
+    DATE(DatumsLaiks),
+    ProduktaNr
+) t
+SQL;
+
         $totalCount = $db->createCommand($countSql)->queryScalar();
 
         $dataProvider = new SqlDataProvider([
@@ -69,7 +80,7 @@ class StatisticsController extends Controller
                   'date','day','product_no','product_name',
                   'pallets_produced','pallets_per_hour','oee'
                 ],
-                'defaultOrder' => ['date'=>SORT_DESC],
+                'defaultOrder' => ['date' => SORT_DESC],
             ],
         ]);
 
