@@ -17,7 +17,7 @@ class ProduktiSearch extends Produkti
     public function rules()
     {
         return [
-            [['ProduktaNr', 'Apraksts', 'IepakojumaTips', 'BazesMervieniba', 'PrecuBrends', 'ProduktaVeids', 'ProduktaNosaukums'], 'safe'],
+            [['ProduktaNr', 'Apraksts', 'IepakojumaTips', 'BazesMervieniba', 'PrecuBrends', 'ProduktaVeids', 'ProduktaNosaukums', 'LinijasAtrums'], 'safe'],
             [['Tilpums', 'NetoSvars', 'BruttoSvars'], 'number'],
             [['Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips', 'barcode'], 'integer'],
         ];
@@ -71,6 +71,7 @@ class ProduktiSearch extends Produkti
             'ProduktiPalete' => $this->ProduktiPalete,
             'RealizacijasTermins' => $this->RealizacijasTermins,
             'PudelesTips'=> $this->PudelesTips,
+            'LinijasAtrums' => $this->LinijasAtrums,
         ]);
 
         $query->andFilterWhere(['like', 'ProduktaNr', $this->ProduktaNr])
@@ -80,7 +81,8 @@ class ProduktiSearch extends Produkti
             ->andFilterWhere(['like', 'PrecuBrends', $this->PrecuBrends])
             ->andFilterWhere(['like', 'ProduktaNosaukums', $this->ProduktaNosaukums])
             ->andFilterWhere(['like', 'barcode', $this->barcode])
-            ->andFilterWhere(['like', 'ProduktaVeids', $this->ProduktaVeids]);
+            ->andFilterWhere(['like', 'ProduktaVeids', $this->ProduktaVeids])
+            ->andFilterWhere(['like', 'LinijasAtrums', $this->LinijasAtrums]);
 
         return $dataProvider;
     }

@@ -27,6 +27,7 @@ use Yii;
  * @property int $PudelesTips
  * @property int $barcode
  * @property string|null $ProduktaNosaukums
+ * @property int $LinijasAtrums
  *
  * @property Paletes[] $paletes
  */
@@ -46,10 +47,10 @@ class Produkti extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ProduktaNr', 'Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips', 'barcode', 'ProduktaNosaukums'], 'required'],
+            [['ProduktaNr', 'Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips', 'barcode', 'ProduktaNosaukums', 'LinijasAtrums'], 'required'],
             [['Apraksts'], 'string'],
             [['Tilpums', 'NetoSvars', 'BruttoSvars'], 'number'],
-            [['Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips', 'barcode'], 'integer'],
+            [['Izkartojums', 'PakasGarums', 'PakasPlatums', 'PakasAugstums', 'ProduktiIepakojuma', 'ProduktiRinda', 'ProduktiPalete', 'RealizacijasTermins', 'PudelesTips', 'barcode', 'LinijasAtrums'], 'integer'],
             [['ProduktaNr'], 'string', 'max' => 50],
             [['IepakojumaTips', 'BazesMervieniba', 'PrecuBrends', 'ProduktaVeids', 'ProduktaNosaukums'], 'string', 'max' => 255],
             [['ProduktaNr'], 'unique'],
@@ -82,6 +83,7 @@ class Produkti extends \yii\db\ActiveRecord
             'PudelesTips' => 'Pudeles Tips',
             'barcode' => 'Svītru Kods',
             'ProduktaNosaukums' => 'Produkta Nosaukums',
+            'LinijasAtrums' => 'LinijasAtrums',
             
         ];
     }

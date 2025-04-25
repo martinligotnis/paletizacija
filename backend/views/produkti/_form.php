@@ -52,6 +52,9 @@ use yii\widgets\ActiveForm;
     
     <?= $form->field($model, 'ProduktaNosaukums')->textInput() ?>
 
+    <?= $form->field($model, 'LinijasAtrums')->textInput() ?>
+    
+
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

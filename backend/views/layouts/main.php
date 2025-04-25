@@ -43,6 +43,7 @@ AppAsset::register($this);
     } else {
         $menuItems[] = ['label' => 'Paletes', 'url' => ['/paletes']];
         $menuItems[] = ['label' => 'Produkti', 'url' => ['/produkti']];
+        $menuItems[] = ['label' => 'Statistika', 'url' => ['/statistics']];
     }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

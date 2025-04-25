@@ -39,6 +39,7 @@ class m240823_122824_produkti extends Migration
             'PudelesTips' => $this->integer(2),//Negāzēts->0, gāzēts->1, viegli gāzēts->2, stikls->3
             'barcode' => $this->bigInteger(20)->notNull(),
             'ProduktaNosaukums' => $this->string(300)->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci'),
+            'LinijasAtrums' => $this->integer()->defaultValue(4700),
             'PRIMARY KEY(ProduktaNr)',
         ], $tableOptions);
     }
