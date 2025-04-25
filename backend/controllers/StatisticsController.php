@@ -15,69 +15,80 @@ class StatisticsController extends Controller
       $palTable  = Paletes::tableName();
       $prodTable = Produkti::tableName();
   
-      $sql = <<<SQL
-  SELECT
-    stats.date,
-    DAYNAME(stats.date)                        AS day,
-    stats.product_no,
-    pr.ProduktaNosaukums                       AS product_name,
-    stats.pallets_produced,
-    pr.ProduktiPalete                          AS units_per_pallet,
-    pr.LinijasAtrums                           AS line_speed_units_per_hour,
-    ROUND(
-      stats.pallets_produced
-      / (stats.duration_sec / 3600),
-      1
-    )                                           AS pallets_per_hour,
-    ROUND(
-      (stats.pallets_produced * pr.ProduktiPalete)
-      / (pr.LinijasAtrums * (stats.duration_sec / 3600)),
-      3
-    )                                           AS oee,
-    -- show total production time here:
-    SEC_TO_TIME(stats.duration_sec)             AS total_time
-  FROM (
-    SELECT
-      DATE(DatumsLaiks)                        AS date,
-      ProduktaNr                               AS product_no,
-      COUNT(*)                                 AS pallets_produced,
-      TIMESTAMPDIFF(
-        SECOND,
-        MIN(DatumsLaiks),
-        MAX(DatumsLaiks)
-      )                                         AS duration_sec
-    FROM {$palTable}
-    GROUP BY
-      DATE(DatumsLaiks),
-      ProduktaNr
-  ) AS stats
-  LEFT JOIN {$prodTable} pr
-    ON pr.ProduktaNr = stats.product_no
-  ORDER BY
-    stats.date DESC,
-    stats.product_no
-  SQL;
+      // Fetch all relevant rows for the period (could add filters for date range)
+      $paletes = (new \yii\db\Query())
+          ->from($palTable)
+          ->all();
   
-      $countSql = <<<SQL
-  SELECT COUNT(*) FROM (
-    SELECT 1
-    FROM {$palTable}
-    GROUP BY
-      DATE(DatumsLaiks),
-      ProduktaNr
-  ) t
-  SQL;
+      // Group by date and product
+      $grouped = [];
+      foreach ($paletes as $p) {
+          $date = date('Y-m-d', strtotime($p['DatumsLaiks']));
+          $prod = $p['ProduktaNr'];
+          $grouped[$date][$prod][] = $p;
+      }
   
-      $totalCount = $db->createCommand($countSql)->queryScalar();
+      // Fetch product info
+      $produkti = Produkti::find()->indexBy('ProduktaNr')->all();
   
-      $dataProvider = new SqlDataProvider([
-          'sql'         => $sql,
-          'totalCount'  => $totalCount,
-          'pagination'  => ['pageSize' => 20],
-          'sort'        => [
-              'attributes'   => [
-                'date','day','product_no','product_name',
-                'pallets_produced','pallets_per_hour','oee','total_time'
+      $rows = [];
+      foreach ($grouped as $date => $prods) {
+          foreach ($prods as $prodNr => $pallets) {
+              usort($pallets, function($a, $b) {
+                  return strtotime($a['DatumsLaiks']) <=> strtotime($b['DatumsLaiks']);
+              });
+  
+              $unitsPerPallet = $produkti[$prodNr]->ProduktiPalete ?? 1;
+              $lineSpeed = $produkti[$prodNr]->LinijasAtrums ?? 1;
+              $productName = $produkti[$prodNr]->ProduktaNosaukums ?? '';
+  
+              $palletCount = count($pallets);
+              $unitCount = $palletCount * $unitsPerPallet;
+  
+              // Calculate total production time, skipping gaps > 4h
+              $prodTimeSec = 0;
+              for ($i = 1; $i < $palletCount; $i++) {
+                  $diff = strtotime($pallets[$i]['DatumsLaiks']) - strtotime($pallets[$i-1]['DatumsLaiks']);
+                  if ($diff <= 4*3600) {
+                      $prodTimeSec += $diff;
+                  }
+              }
+              // If only one pallet, prodTimeSec = 0
+  
+              // OEE calculation (avoid division by zero)
+              $prodTimeHr = $prodTimeSec / 3600;
+              $oee = ($prodTimeHr > 0 && $lineSpeed > 0)
+                  ? round($unitCount / ($lineSpeed * $prodTimeHr), 3)
+                  : null;
+  
+              // Pallets/hour (for reference, using filtered time)
+              $palletsPerHour = ($prodTimeHr > 0)
+                  ? round($palletCount / $prodTimeHr, 1)
+                  : null;
+  
+              $rows[] = [
+                  'date' => $date,
+                  'day' => date('l', strtotime($date)),
+                  'product_no' => $prodNr,
+                  'product_name' => $productName,
+                  'pallets_produced' => $palletCount,
+                  'units_per_pallet' => $unitsPerPallet,
+                  'line_speed_units_per_hour' => $lineSpeed,
+                  'pallets_per_hour' => $palletsPerHour,
+                  'oee' => $oee,
+                  'total_time' => gmdate('H:i:s', $prodTimeSec),
+              ];
+          }
+      }
+  
+      // Use ArrayDataProvider for the view
+      $dataProvider = new \yii\data\ArrayDataProvider([
+          'allModels' => $rows,
+          'pagination' => ['pageSize' => 20],
+          'sort' => [
+              'attributes' => [
+                  'date','day','product_no','product_name',
+                  'pallets_produced','pallets_per_hour','oee','total_time'
               ],
               'defaultOrder' => ['date' => SORT_DESC],
           ],
@@ -87,5 +98,6 @@ class StatisticsController extends Controller
           'dataProvider' => $dataProvider,
       ]);
   }
+  
   
 }
