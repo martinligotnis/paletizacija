@@ -12,8 +12,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'columns' => [
+        'dataProvider' => $dataProvider,
+        'columns' => [
             ['attribute'=>'date',  'label'=>'Date',  'format'=>['date','php:d.m.Y']],
             ['attribute'=>'day',   'label'=>'Day'],
             ['attribute'=>'product_no',    'label'=>'Product No'],
@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute'=>'pallets_per_hour','label'=>'Pallets/hr'],
             [
             'attribute'=>'oee',
-            'label'=>'OEE',
+            'label'=>'Product OEE',
             'format'=>'percent',
             'value'=> function($model){ return $model['oee']; }
             ],
@@ -33,7 +33,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'label'=>'Total Production Time',
             'format'=>'text',
             ],
+            [
+            'attribute'=>'overall_efficiency',
+            'label'=>'Overall Daily Efficiency',
+            'format'=>'percent',
+            'value'=>function($model){ return $model['overall_efficiency']; }
+            ],
         ],
     ]); ?>
+
 
 </div>

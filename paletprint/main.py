@@ -67,8 +67,8 @@ def printit():
   # Connect to the MySQL database with no password on localhost for user "root".
   conn = mysql.connector.connect(
     host="127.0.0.1",
-    user="root",
-    password=""
+    user="venden",
+    password="venden_SQl_2024"
   )
 
   print(conn)  # Print the connection object for debugging purposes.
