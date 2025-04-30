@@ -19,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute'=>'product_no',    'label'=>'Product No'],
             ['attribute'=>'product_name',  'label'=>'Product Name'],
             ['attribute'=>'pallets_produced','label'=>'Pallets Produced'],
-            ['attribute'=>'units_per_pallet','label'=>'Units/Pallet'],
-            ['attribute'=>'line_speed_units_per_hour','label'=>'Line Speed (units/hr)'],
+            // ['attribute'=>'units_per_pallet','label'=>'Units/Pallet'],
+            // ['attribute'=>'line_speed_units_per_hour','label'=>'Line Speed (units/hr)'],
             ['attribute'=>'pallets_per_hour','label'=>'Pallets/hr'],
             [
             'attribute'=>'oee',
