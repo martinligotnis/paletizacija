@@ -41,9 +41,9 @@ AppAsset::register($this);
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = ['label' => 'Paletes', 'url' => ['/paletes']];
-        $menuItems[] = ['label' => 'Produkti', 'url' => ['/produkti']];
-        $menuItems[] = ['label' => 'Statistika', 'url' => ['/statistics']];
+        $menuItems[] = ['label' => 'Paletes', 'url' => ['/paletes/index', 'sort' => '-DatumsLaiks']];
+        $menuItems[] = ['label' => 'Produkti', 'url' => ['/produkti/index']];
+        $menuItems[] = ['label' => 'Statistika', 'url' => ['/statistics/index']];
     }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

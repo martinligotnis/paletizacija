@@ -45,15 +45,19 @@ return [
             'errorAction' => 'site/error',
         ],
         
-        // 'urlManager' => [
-        //     'enablePrettyUrl' => true,
-        //     'showScriptName' => false,
-        //     'rules' => [
-        //         '<controller:\w+>/<id:\d+>' => '<controller>/view',
-        //         '<controller:\w+>/<action:\w+>' => '<controller>/<action>',   
-        
-        //     ],
-        // ],
+        'urlManager' => [
+            'class'                 => 'yii\web\UrlManager',
+            'enablePrettyUrl'       => true,
+            'showScriptName'        => false,
+            'enableStrictParsing'   => false,
+            'rules' => [
+                'paletes' => 'paletes/index',
+                'produkti' => 'produkti/index',
+                'statistika' => 'statistics/index',
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',        
+            ],
+        ],       
         
     ],
     'params' => $params,
