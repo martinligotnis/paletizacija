@@ -59,7 +59,7 @@ $gridColumns = [
     'ProduktiPalete',
     'DatumsLaiks',
     'PaletesID',
-    'RealizacijasTermins',
+    // 'RealizacijasTermins',
     'IsPrinted',
 
     [

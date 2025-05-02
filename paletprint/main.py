@@ -105,8 +105,8 @@ def printit():
         # Replace dot with comma for volume and append " L".
         Tilpums = str(ProductData[0][2]).replace(".", ",") + " L"
         # Calculate packaging details as count x packaging size.
-        Iepakojumi = str(int(ProductData[0][14] / ProductData[0][12])) + "x" + str(int(ProductData[0][12]))
-        Daudzums = str(int(ProductData[0][14]))
+        Iepakojumi = str(int(InitCheck[i][2] / ProductData[0][12])) + "x" + str(int(ProductData[0][12]))
+        Daudzums = str(InitCheck[i][2])
         Razotajs = "SIA VENDEN"  # Hardcoded manufacturer name.
         PaletesNr = str(SequentialNumber)
         Svitrkods = str(ProductData[0][18])
