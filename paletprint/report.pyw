@@ -18,7 +18,7 @@ logging.info("=== Script started ===")
 # --- TELEGRAM CONFIG ---
 api_id       = 27858609
 api_hash     = '3e5f4ee759dd212072532b9db5793abd'
-session_name = 'rita_zinojums'
+session_name = r"C:\xampp\htdocs\paletprint\rita_zinojums.session"
 group_link   = 'https://t.me/+n02K7B1y12E0MmVk'
 
 # --- REPORT SCHEDULE ---
@@ -146,13 +146,13 @@ def send_report():
           day_start, overnight_summary, produced_overnight,
           today_summary, producing_today, efficiency
         )
-    elif time(12,0) <= current_time < time(12,10):
+    elif time(12,0) <= current_time < time(12,5):
         message = compose_midday_message(day_start, today_summary, efficiency, 12)
-    elif time(15,0) <= current_time < time(15,10):
+    elif time(15,0) <= current_time < time(15,5):
         message = compose_midday_message(day_start, today_summary, efficiency, 15)
-    elif time(18,0) <= current_time < time(18,10):
+    elif time(18,0) <= current_time < time(18,5):
         message = compose_midday_message(day_start, today_summary, efficiency, 18)
-    elif time(0,30) <= current_time < time(0,40):
+    elif time(0,30) <= current_time < time(0,35):
         message = compose_midday_message(day_start, today_summary, efficiency, 0)
 
     if not message:
