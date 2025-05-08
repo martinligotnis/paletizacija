@@ -23,7 +23,6 @@ group_link   = 'https://t.me/+n02K7B1y12E0MmVk'
 
 # --- REPORT SCHEDULE ---
 REPORT_INTERVAL = 300.0   # seconds
-report_times    = [(8,0), (12,0), (15,0), (18,0), (0,30)]
 
 def compose_8am_message(day_start, overnight_summary, produced_overnight,
                         today_summary, producing_today, overall_efficiency):
@@ -51,21 +50,27 @@ def compose_midday_message(day_start, today_summary, overall_efficiency, hour):
     lines.append(f"Efficiency so far: {overall_efficiency*100:.2f}%")
     return "\n".join(lines)
 
+def compose_final_message(day_start, today_summary, overall_efficiency):
+    lines = [f"Final report for {day_start.date()}:"]
+    for row in today_summary:
+        lines.append(f" - {row['ProduktaNosaukums']}: {row['pallets']} pallets")
+    lines.append(f"Overall efficiency: {overall_efficiency*100:.2f}%")
+    return "\n".join(lines)
+
 def send_report():
-    # reschedule next run
+    # schedule next run
     threading.Timer(REPORT_INTERVAL, send_report).start()
 
     now = datetime.now()
-    today = now.date()
     current_time = now.time()
     logging.info("Checking report at %s", now.strftime("%Y-%m-%d %H:%M:%S"))
 
-    # --- compute day_start ---
+    # compute day_start at 6 AM (or previous day if before 6)
     day_start = datetime(now.year, now.month, now.day, 6, 0)
     if current_time < time(6,0):
         day_start -= timedelta(days=1)
 
-    # --- CONNECT & QUERY DB ---
+    # --- DB QUERIES ---
     try:
         conn = mysql.connector.connect(
             host="127.0.0.1", user="venden",
@@ -76,49 +81,49 @@ def send_report():
         logging.exception("DB connection failed")
         return
 
-    # 1) overnight summary
+    # overnight window: 00:30–06:00
     y0030 = datetime.combine(day_start.date(), time(0,30))
     overnight_start = y0030 if y0030 < day_start else (y0030 - timedelta(days=1))
 
     cursor.execute(
-      "SELECT COUNT(*) cnt FROM paletes "
-      "WHERE DatumsLaiks >= %s AND DatumsLaiks < %s",
-      (overnight_start, day_start)
+        "SELECT COUNT(*) cnt FROM paletes "
+        "WHERE DatumsLaiks >= %s AND DatumsLaiks < %s",
+        (overnight_start, day_start)
     )
     produced_overnight = cursor.fetchone()['cnt'] > 0
 
     overnight_summary = []
     if produced_overnight:
         cursor.execute(
-          "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets "
-          "FROM paletes p "
-          "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "
-          "WHERE p.DatumsLaiks>=%s AND p.DatumsLaiks<%s "
-          "GROUP BY p.ProduktaNr",
-          (overnight_start, day_start)
+            "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets "
+            "FROM paletes p "
+            "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "
+            "WHERE p.DatumsLaiks >= %s AND p.DatumsLaiks < %s "
+            "GROUP BY p.ProduktaNr",
+            (overnight_start, day_start)
         )
         overnight_summary = cursor.fetchall()
 
-    # 2) today's summary
+    # today’s summary
     cursor.execute(
-      "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets, "
-      "MIN(p.DatumsLaiks) AS first_pallet "
-      "FROM paletes p "
-      "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "
-      "WHERE p.DatumsLaiks>=%s AND p.DatumsLaiks<%s "
-      "GROUP BY p.ProduktaNr ORDER BY first_pallet",
-      (day_start, now)
+        "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets, "
+        "MIN(p.DatumsLaiks) AS first_pallet "
+        "FROM paletes p "
+        "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "
+        "WHERE p.DatumsLaiks >= %s AND p.DatumsLaiks < %s "
+        "GROUP BY p.ProduktaNr ORDER BY first_pallet",
+        (day_start, now)
     )
     today_summary = cursor.fetchall()
     producing_today = bool(today_summary)
 
-    # 3) compute efficiency
+    # efficiency calculation
     cursor.execute("SELECT ProduktaNr, ProduktiPalete, LinijasAtrums FROM produkti")
     prod_info = {r['ProduktaNr']: r for r in cursor.fetchall()}
 
     cursor.execute(
-      "SELECT * FROM paletes WHERE DatumsLaiks>=%s AND DatumsLaiks<%s",
-      (day_start, now)
+        "SELECT * FROM paletes WHERE DatumsLaiks >= %s AND DatumsLaiks < %s",
+        (day_start, now)
     )
     pallets_today = cursor.fetchall()
 
@@ -133,33 +138,38 @@ def send_report():
             default=1
         )
         nominal = max_speed * elapsed_h if elapsed_h > 0 else 0
-        efficiency = (cumulative / nominal) if nominal else 0
+        efficiency = cumulative / nominal if nominal else 0
     else:
         efficiency = 0
 
     conn.close()
 
-    # --- decide if it’s time to send ---
+    # --- DECIDE WHICH REPORT TO SEND ---
     message = None
+
+    # 8 AM morning report
     if time(8,0) <= current_time < time(8,5):
         message = compose_8am_message(
-          day_start, overnight_summary, produced_overnight,
-          today_summary, producing_today, efficiency
+            day_start, overnight_summary, produced_overnight,
+            today_summary, producing_today, efficiency
         )
-    elif time(12,0) <= current_time < time(12,5):
-        message = compose_midday_message(day_start, today_summary, efficiency, 12)
-    elif time(15,0) <= current_time < time(15,5):
-        message = compose_midday_message(day_start, today_summary, efficiency, 15)
-    elif time(18,0) <= current_time < time(18,5):
-        message = compose_midday_message(day_start, today_summary, efficiency, 18)
+
+    # Hourly midday reports from 9 AM through 8 PM
+    elif any(time(h,0) <= current_time < time(h,5) for h in range(9, 21)):
+        for h in range(9, 21):
+            if time(h,0) <= current_time < time(h,5):
+                message = compose_midday_message(day_start, today_summary, efficiency, h)
+                break
+
+    # Final report at 12:30 AM
     elif time(0,30) <= current_time < time(0,35):
-        message = compose_midday_message(day_start, today_summary, efficiency, 0)
+        message = compose_final_message(day_start, today_summary, efficiency)
 
     if not message:
         logging.info("No report to send at this time.")
         return
 
-    # --- SEND via Telethon, with per-thread event loop ---
+    # --- SEND VIA TELETHON (per-thread loop) ---
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -172,5 +182,6 @@ def send_report():
     except Exception:
         logging.exception("Failed to send Telegram report")
 
-# Kick off immediately
+
+# Kick off the loop immediately
 send_report()
