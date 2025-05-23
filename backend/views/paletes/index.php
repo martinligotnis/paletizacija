@@ -3,6 +3,8 @@ use yii\helpers\Html;
 use yii\grid\SerialColumn;
 use yii\grid\ActionColumn;
 use kartik\export\ExportMenu;
+use yii\helpers\Url;
+use backend\models\Paletes;
 use backend\models\ProductMetrics;
 
 /* @var $this yii\web\View */
@@ -93,8 +95,8 @@ $gridColumns = [
     ],
 
     ['class'=>ActionColumn::class,
-     'urlCreator'=>function($action,$model,$key,$index){
-         return ['/'.$this->context->id.'/'.$action,'DatumsLaiks'=>$model->DatumsLaiks];
+     'urlCreator'=> function($action,Paletes $model,$key,$index, $column){
+        return Url::toRoute([$action,'DatumsLaiks'=>$model->DatumsLaiks]);
      }
     ],
 ];
