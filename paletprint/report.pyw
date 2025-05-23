@@ -46,7 +46,7 @@ def compose_8am_message(day_start, overnight_summary, produced_overnight,
 def compose_midday_message(day_start, today_summary, overall_efficiency, hour):
     lines = [f"{day_start.date()} status at {hour:02d}:00"]
     for row in today_summary:
-        lines.append(f" - {row['ProduktaNosaukums']}: {row['pallets']} pallets")
+        lines.append(f" - {row['ProduktaNosaukums']} {row['Tilpums']}L: {row['pallets']} pallets")
     lines.append(f"Efficiency so far: {overall_efficiency*100:.2f}%")
     return "\n".join(lines)
 

@@ -102,16 +102,16 @@ $gridColumns = [
 ];
 ?>
 
-<?= ExportMenu::widget([
-    'dataProvider'=>$dataProvider,
-    'columns'=>$gridColumns,
-    'clearBuffers'=>true,
-]) ?>
-
 <?= \kartik\grid\GridView::widget([
     'dataProvider'=>$dataProvider,
     'filterModel'=>$searchModel,
     'columns'=>$gridColumns,
+]) ?>
+
+<?= ExportMenu::widget([
+    'dataProvider'=>$dataProvider,
+    'columns'=>$gridColumns,
+    'clearBuffers'=>true,
 ]) ?>
 
 </div>

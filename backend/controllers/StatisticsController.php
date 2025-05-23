@@ -74,7 +74,7 @@ class StatisticsController extends Controller
                 $prod = $produkti[$prodNr] ?? null;
                 $unitsPerPallet = $prod ? $prod->ProduktiPalete : 1;
                 $lineSpeed = $prod ? $prod->LinijasAtrums : 1;
-                $productName = $prod ? $prod->ProduktaNosaukums : '';
+                $productName = $prod ? $prod->ProduktaNosaukums . " " . $prod->Tilpums . "L" : '';
 
                 // Run time: from run start to run end or to window end, whichever is less
                 $runStart = max($run['start'], $windowStart);
