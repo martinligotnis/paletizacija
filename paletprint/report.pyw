@@ -95,7 +95,7 @@ def send_report():
     overnight_summary = []
     if produced_overnight:
         cursor.execute(
-            "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets "
+            "SELECT p.ProduktaNr, pr.ProduktaNosaukums, pr.Tilpums, COUNT(*) AS pallets "
             "FROM paletes p "
             "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "
             "WHERE p.DatumsLaiks >= %s AND p.DatumsLaiks < %s "
@@ -106,7 +106,7 @@ def send_report():
 
     # today’s summary
     cursor.execute(
-        "SELECT p.ProduktaNr, pr.ProduktaNosaukums, COUNT(*) AS pallets, "
+        "SELECT p.ProduktaNr, pr.ProduktaNosaukums, pr.Tilpums, COUNT(*) AS pallets, "
         "MIN(p.DatumsLaiks) AS first_pallet "
         "FROM paletes p "
         "LEFT JOIN produkti pr ON pr.ProduktaNr=p.ProduktaNr "

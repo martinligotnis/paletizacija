@@ -12,7 +12,7 @@ $this->title = 'Kontroles Panelis';
             ['title'=>'Paletes Šodien kopā','value'=>$totalToday,       'bg'=>'primary'],
             ['title'=>'SKU','value'=>$uniqueProducts,       'bg'=>'success'],
             ['title'=>'Paletes / stundā','value'=>$palletsPerHour,         'bg'=>'info'],
-            // ['title'=>'Overall OEE','value'=>$overallOee!==null? "{$overallOee}%" : '–', 'bg'=>'danger'],
+            ['title'=>'Overall','value'=>$overallOee!==null? "{$overallOee}" : '–', 'bg'=>'secondary'],
         ];?>
         <?php foreach($cards as $c): ?>
         <div class="col-lg-3 col-md-6 mb-3">
